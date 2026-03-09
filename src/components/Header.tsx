@@ -17,8 +17,8 @@ const navLinks = [
   { to: "/menu", label: "Menu" },
   { to: "/reservation", label: "Reserve" },
   { to: "/gallery", label: "Gallery" },
-  { to: "/contact", label: "Contact" },
   { to: "/about", label: "About" },
+  { to: "/contact", label: "Contact" },
 ];
 
 const Header = () => {
@@ -40,7 +40,7 @@ const Header = () => {
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
       <div className="container flex items-center justify-between h-16 md:h-20">
         <Link to="/" className="font-display text-2xl font-bold text-foreground tracking-tight">
-          Saffron<span className="text-primary">.</span>
+          Spice Garden<span className="text-primary">.</span>
         </Link>
 
         <nav className="hidden md:flex items-center gap-6">

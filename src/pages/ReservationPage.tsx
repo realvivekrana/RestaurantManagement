@@ -1,10 +1,25 @@
-import { useState } from "react";
-import { CalendarDays, Clock, Users } from "lucide-react";
+import { useState, useEffect } from "react";
+import { CalendarDays, Clock, Users, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { useAuth } from "@/context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const ReservationPage = () => {
+  const { user, isLoggedIn } = useAuth();
+  const navigate = useNavigate();
   const [form, setForm] = useState({ name: "", phone: "", guests: "2", date: "", time: "", notes: "" });
+
+  // Prefill form with user data if logged in
+  useEffect(() => {
+    if (user) {
+      setForm((prev) => ({
+        ...prev,
+        name: user.name || prev.name,
+        phone: user.phone || prev.phone,
+      }));
+    }
+  }, [user]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -12,16 +27,63 @@ const ReservationPage = () => {
       toast.error("Please fill all required fields");
       return;
     }
+    
+    // TODO: Send reservation to backend
+    // await fetch('/api/reservations', {
+    //   method: 'POST',
+    //   headers: { 'Content-Type': 'application/json' },
+    //   body: JSON.stringify({ ...form, userId: user.id })
+    // });
+    
     toast.success("Reservation confirmed! We'll see you soon.");
-    setForm({ name: "", phone: "", guests: "2", date: "", time: "", notes: "" });
+    setTimeout(() => {
+      navigate("/profile/reservations");
+    }, 1500);
   };
 
   const update = (field: string, value: string) => setForm((p) => ({ ...p, [field]: value }));
 
+  // Require login before making reservation
+  if (!isLoggedIn) {
+    return (
+      <main className="pt-24 pb-20 min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto px-4">
+          <div className="bg-primary/10 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+            <LogIn className="w-10 h-10 text-primary" />
+          </div>
+          <h1 className="font-display text-3xl font-bold mb-4">Login Required</h1>
+          <p className="font-body text-muted-foreground mb-6">
+            Please login to make a table reservation. This helps us manage your bookings and send you confirmations.
+          </p>
+          <div className="space-y-3">
+            <Button 
+              onClick={() => navigate("/login", { state: { from: "/reservation" } })} 
+              className="w-full bg-primary text-primary-foreground font-body"
+            >
+              Login to Continue
+            </Button>
+            <Button 
+              onClick={() => navigate("/")} 
+              variant="outline"
+              className="w-full font-body"
+            >
+              Back to Home
+            </Button>
+          </div>
+          <div className="mt-6 p-4 bg-muted/50 rounded-lg">
+            <p className="font-body text-sm text-muted-foreground">
+              <strong>Why login?</strong> Track your reservations, receive confirmations, and manage bookings easily from your profile.
+            </p>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="pt-24 pb-20 min-h-screen bg-background">
       <div className="container max-w-2xl">
-        <div className="mb-10 text-center">
+        <div className="mb-10 text-center animate-fade-in-up">
           <p className="font-body text-primary font-semibold text-sm tracking-widest uppercase mb-2">Reserve</p>
           <h1 className="font-display text-4xl md:text-5xl font-bold mb-4">Book a Table</h1>
           <p className="font-body text-muted-foreground max-w-md mx-auto">
@@ -29,7 +91,7 @@ const ReservationPage = () => {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-card border border-border rounded-2xl p-6 md:p-10 space-y-5">
+        <form onSubmit={handleSubmit} className="bg-card border border-border rounded-2xl p-6 md:p-10 space-y-5 hover-lift animate-scale-in">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
               <label className="font-body text-sm font-medium mb-1.5 block">Name *</label>

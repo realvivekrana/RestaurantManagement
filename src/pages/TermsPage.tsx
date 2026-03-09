@@ -5,7 +5,7 @@ const TermsPage = () => (
       <div className="font-body text-sm text-muted-foreground space-y-6 leading-relaxed">
         <section>
           <h2 className="font-display text-lg font-semibold text-foreground mb-2">1. Acceptance of Terms</h2>
-          <p>By accessing and using the Saffron restaurant website, you accept and agree to be bound by the terms and provisions of this agreement.</p>
+          <p>By accessing and using the Spice Garden restaurant website, you accept and agree to be bound by the terms and provisions of this agreement.</p>
         </section>
         <section>
           <h2 className="font-display text-lg font-semibold text-foreground mb-2">2. Use of Service</h2>
@@ -25,7 +25,7 @@ const TermsPage = () => (
         </section>
         <section>
           <h2 className="font-display text-lg font-semibold text-foreground mb-2">6. Limitation of Liability</h2>
-          <p>Saffron shall not be liable for any indirect, incidental, or consequential damages arising from the use of our services.</p>
+          <p>Spice Garden shall not be liable for any indirect, incidental, or consequential damages arising from the use of our services.</p>
         </section>
         <p className="text-xs">Last updated: March 2026</p>
       </div>

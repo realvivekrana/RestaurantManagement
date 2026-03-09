@@ -1,5 +1,5 @@
 import { useAuth } from "@/context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { LogIn, Shield } from "lucide-react";
 import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
@@ -10,9 +10,13 @@ const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || "your-google-c
 const LoginPage = () => {
   const { login, loginAsAdmin, isLoggedIn } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Get the redirect path from location state, default to /profile
+  const from = (location.state as any)?.from || "/profile";
 
   if (isLoggedIn) {
-    navigate("/profile");
+    navigate(from);
     return null;
   }
 
@@ -31,7 +35,7 @@ const LoginPage = () => {
       console.log("Google credential:", credentialResponse.credential);
       toast.success("Google Sign-In successful!");
       login();
-      navigate("/profile");
+      navigate(from);
     } catch (error) {
       console.error("Google sign-in error:", error);
       toast.error("Failed to sign in with Google");
@@ -44,13 +48,13 @@ const LoginPage = () => {
 
   return (
     <main className="pt-24 pb-20 min-h-screen bg-background flex items-center justify-center">
-      <div className="w-full max-w-md">
+      <div className="w-full max-w-md animate-fade-in-up">
         <div className="text-center mb-8">
-          <h1 className="font-display text-4xl font-bold mb-3">Welcome Back</h1>
-          <p className="font-body text-muted-foreground">Sign in to access your orders and reservations</p>
+          <h1 className="font-display text-4xl font-bold mb-3 animate-fade-in-down">Welcome Back</h1>
+          <p className="font-body text-muted-foreground animate-fade-in-up stagger-1">Sign in to access your orders and reservations</p>
         </div>
 
-        <div className="bg-card border border-border rounded-2xl p-8 space-y-4">
+        <div className="bg-card border border-border rounded-2xl p-8 space-y-4 hover-lift animate-scale-in">
           {/* Google Sign-In */}
           <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
             <div className="flex justify-center">
@@ -72,7 +76,7 @@ const LoginPage = () => {
             <div className="relative flex justify-center text-xs"><span className="px-2 bg-card text-muted-foreground font-body">or for demo</span></div>
           </div>
 
-          <Button onClick={() => { login(); navigate("/profile"); }} variant="outline" className="w-full font-body gap-2">
+          <Button onClick={() => { login(); navigate(from); }} variant="outline" className="w-full font-body gap-2">
             <LogIn className="w-4 h-4" /> Mock User Login
           </Button>
 

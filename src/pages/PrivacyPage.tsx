@@ -25,7 +25,7 @@ const PrivacyPage = () => (
         </section>
         <section>
           <h2 className="font-display text-lg font-semibold text-foreground mb-2">6. Contact</h2>
-          <p>For privacy concerns, contact us at privacy@saffron.in or +91 98765 43210.</p>
+          <p>For privacy concerns, contact us at privacy@spicegarden.in or +91 98765 43210.</p>
         </section>
         <p className="text-xs">Last updated: March 2026</p>
       </div>

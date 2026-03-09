@@ -1,6 +1,6 @@
-# Restaurant Management System
+# Spice Garden - Restaurant Management System
 
-A full-stack Restaurant Website built with React (frontend) and designed for the MERN stack. Customers can view the menu, add items to cart, place online orders, and reserve tables. Admins have a secure dashboard to manage menu items, orders, and reservations.
+A full-stack Restaurant Website built with React (frontend) and designed for the MERN stack. Spice Garden is an authentic Indian restaurant where customers can view the menu, add items to cart, place online orders, and reserve tables. Admins have a secure dashboard to manage menu items, orders, and reservations.
 
 ## 📋 Table of Contents
 

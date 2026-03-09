@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import { CreditCard, Wallet } from "lucide-react";
+import { CreditCard, Wallet, LogIn } from "lucide-react";
 
 // Load Razorpay script
 const loadRazorpayScript = () => {
@@ -19,12 +19,37 @@ const loadRazorpayScript = () => {
 
 const CheckoutPage = () => {
   const { items, totalPrice, clearCart } = useCart();
-  const { user } = useAuth();
+  const { user, isLoggedIn } = useAuth();
   const navigate = useNavigate();
-  const [form, setForm] = useState({ name: "", phone: "", address: "", payment: "cod" });
+  const [form, setForm] = useState({ name: "", phone: "", address: "", payment: "cod", selectedAddressId: "" });
   const [loading, setLoading] = useState(false);
 
+  // Prefill form with user data if logged in
+  useEffect(() => {
+    if (user) {
+      const primaryAddress = user.addresses?.find((a) => a.isPrimary);
+      setForm((prev) => ({
+        ...prev,
+        name: user.name || prev.name,
+        phone: user.phone || prev.phone,
+        address: primaryAddress?.fullAddress || prev.address,
+        selectedAddressId: primaryAddress?.id || "",
+      }));
+    }
+  }, [user]);
+
   const update = (field: string, value: string) => setForm((p) => ({ ...p, [field]: value }));
+
+  const handleAddressSelect = (addressId: string) => {
+    const selectedAddr = user?.addresses?.find((a) => a.id === addressId);
+    if (selectedAddr) {
+      setForm((prev) => ({
+        ...prev,
+        address: selectedAddr.fullAddress,
+        selectedAddressId: addressId,
+      }));
+    }
+  };
 
   const handleRazorpayPayment = async () => {
     setLoading(true);
@@ -56,7 +81,7 @@ const CheckoutPage = () => {
       key: import.meta.env.VITE_RAZORPAY_KEY_ID || "rzp_test_YOUR_KEY_ID", // Replace with your Razorpay key
       amount: orderData.amount,
       currency: orderData.currency,
-      name: "Restaurant Name",
+      name: "Spice Garden",
       description: "Order Payment",
       order_id: orderData.id,
       handler: function (response: any) {
@@ -136,20 +161,90 @@ const CheckoutPage = () => {
     );
   }
 
+  // Require login before checkout
+  if (!isLoggedIn) {
+    return (
+      <main className="pt-24 pb-20 min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto px-4">
+          <div className="bg-primary/10 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+            <LogIn className="w-10 h-10 text-primary" />
+          </div>
+          <h1 className="font-display text-3xl font-bold mb-4">Login Required</h1>
+          <p className="font-body text-muted-foreground mb-6">
+            Please login to place your order. This helps us keep track of your orders and provide better service.
+          </p>
+          <div className="space-y-3">
+            <Button 
+              onClick={() => navigate("/login", { state: { from: "/checkout" } })} 
+              className="w-full bg-primary text-primary-foreground font-body"
+            >
+              Login to Continue
+            </Button>
+            <Button 
+              onClick={() => navigate("/menu")} 
+              variant="outline"
+              className="w-full font-body"
+            >
+              Back to Menu
+            </Button>
+          </div>
+          <div className="mt-6 p-4 bg-muted/50 rounded-lg">
+            <p className="font-body text-sm text-muted-foreground">
+              <strong>Why login?</strong> Your cart items are saved, and you can track your orders anytime in your profile.
+            </p>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="pt-24 pb-20 min-h-screen bg-background">
       <div className="container max-w-3xl">
-        <h1 className="font-display text-4xl font-bold mb-8">Checkout</h1>
+        <h1 className="font-display text-4xl font-bold mb-8 animate-fade-in-up">Checkout</h1>
         <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
-          <form onSubmit={handleOrder} className="md:col-span-3 space-y-5">
-            <div className="bg-card border border-border rounded-2xl p-6 space-y-4">
+          <form onSubmit={handleOrder} className="md:col-span-3 space-y-5 animate-fade-in-up stagger-1">
+            <div className="bg-card border border-border rounded-2xl p-6 space-y-4 hover-lift">
               <h2 className="font-display text-lg font-semibold">Delivery Details</h2>
               <input value={form.name} onChange={(e) => update("name", e.target.value)} placeholder="Full Name *" className="w-full px-4 py-2.5 rounded-lg border border-border bg-background font-body text-sm focus:outline-none focus:ring-2 focus:ring-primary/50" required />
               <input value={form.phone} onChange={(e) => update("phone", e.target.value)} placeholder="Phone Number *" type="tel" className="w-full px-4 py-2.5 rounded-lg border border-border bg-background font-body text-sm focus:outline-none focus:ring-2 focus:ring-primary/50" required />
-              <textarea value={form.address} onChange={(e) => update("address", e.target.value)} placeholder="Delivery Address *" rows={3} className="w-full px-4 py-2.5 rounded-lg border border-border bg-background font-body text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none" required />
+              
+              {/* Saved Addresses */}
+              {user?.addresses && user.addresses.length > 0 && (
+                <div>
+                  <label className="font-body text-sm font-medium mb-2 block">Select Saved Address</label>
+                  <div className="space-y-2 mb-3">
+                    {user.addresses.map((addr) => (
+                      <label
+                        key={addr.id}
+                        className={`flex items-start gap-3 p-3 border-2 rounded-lg cursor-pointer transition-colors ${
+                          form.selectedAddressId === addr.id
+                            ? "border-primary bg-primary/5"
+                            : "border-border hover:border-primary/50"
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name="savedAddress"
+                          checked={form.selectedAddressId === addr.id}
+                          onChange={() => handleAddressSelect(addr.id)}
+                          className="mt-1 w-4 h-4 text-primary"
+                        />
+                        <div className="flex-1">
+                          <p className="font-body font-semibold text-sm">{addr.label}</p>
+                          <p className="font-body text-xs text-muted-foreground">{addr.fullAddress}</p>
+                        </div>
+                      </label>
+                    ))}
+                  </div>
+                  <p className="font-body text-xs text-muted-foreground mb-2">Or enter a new address:</p>
+                </div>
+              )}
+              
+              <textarea value={form.address} onChange={(e) => { update("address", e.target.value); setForm((p) => ({ ...p, selectedAddressId: "" })); }} placeholder="Delivery Address *" rows={3} className="w-full px-4 py-2.5 rounded-lg border border-border bg-background font-body text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none" required />
             </div>
 
-            <div className="bg-card border border-border rounded-2xl p-6 space-y-3">
+            <div className="bg-card border border-border rounded-2xl p-6 space-y-3 hover-lift">
               <h2 className="font-display text-lg font-semibold">Payment Method</h2>
               
               <label className="flex items-center gap-3 p-4 border-2 border-border rounded-lg cursor-pointer hover:border-primary transition-colors">
@@ -183,14 +278,14 @@ const CheckoutPage = () => {
             <Button 
               type="submit" 
               disabled={loading}
-              className="w-full bg-primary text-primary-foreground hover:bg-primary/90 font-body font-semibold py-3 text-base"
+              className="w-full bg-primary text-primary-foreground hover:bg-primary/90 font-body font-semibold py-3 text-base transition-all hover-scale active:scale-95"
             >
               {loading ? "Processing..." : `Place Order — ₹${totalPrice.toFixed(0)}`}
             </Button>
           </form>
 
-          <div className="md:col-span-2">
-            <div className="bg-card border border-border rounded-2xl p-6 sticky top-24">
+          <div className="md:col-span-2 animate-fade-in-up stagger-2">
+            <div className="bg-card border border-border rounded-2xl p-6 sticky top-24 hover-lift">
               <h2 className="font-display text-lg font-semibold mb-4">Order Summary</h2>
               <div className="space-y-3 mb-4">
                 {items.map((item) => (

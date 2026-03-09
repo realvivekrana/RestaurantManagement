@@ -14,7 +14,7 @@ const Footer = () => {
       <div className="container grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
         <div>
           <h3 className="font-display text-2xl font-bold mb-4">
-            Saffron<span className="text-primary">.</span>
+            Spice Garden<span className="text-primary">.</span>
           </h3>
           <p className="font-body text-sm text-secondary-foreground/70 leading-relaxed">
             A culinary experience that blends tradition with innovation. Every dish tells a story of passion and flavor.
@@ -42,14 +42,14 @@ const Footer = () => {
           <div className="flex flex-col gap-3 font-body text-sm text-secondary-foreground/70">
             <div className="flex items-center gap-2"><MapPin className="w-4 h-4 text-primary" /> 123 Flavor Street, Mumbai</div>
             <div className="flex items-center gap-2"><Phone className="w-4 h-4 text-primary" /> +91 98765 43210</div>
-            <div className="flex items-center gap-2"><Mail className="w-4 h-4 text-primary" /> hello@saffron.in</div>
+            <div className="flex items-center gap-2"><Mail className="w-4 h-4 text-primary" /> hello@spicegarden.in</div>
             <div className="flex items-center gap-2"><Clock className="w-4 h-4 text-primary" /> 11 AM – 11 PM, Daily</div>
           </div>
         </div>
       </div>
       <div className="container border-t border-secondary-foreground/10 pt-6">
         <p className="text-center font-body text-xs text-secondary-foreground/50">
-          © 2026 Saffron Restaurant. All rights reserved.
+          © 2026 Spice Garden Restaurant. All rights reserved.
         </p>
       </div>
     </footer>

@@ -37,7 +37,7 @@ const ContactPage = () => {
             {[
               { icon: MapPin, label: "Visit Us", value: "123 Flavor Street, Bandra West, Mumbai 400050" },
               { icon: Phone, label: "Call Us", value: "+91 98765 43210" },
-              { icon: Mail, label: "Email", value: "hello@saffron.in" },
+              { icon: Mail, label: "Email", value: "hello@spicegarden.in" },
               { icon: Clock, label: "Hours", value: "Mon–Sun: 11:00 AM – 11:00 PM" },
             ].map((info) => (
               <div key={info.label} className="flex items-start gap-4 p-5 rounded-xl bg-card border border-border">

@@ -89,7 +89,7 @@ export const mockUsers: AppUser[] = [
   { id: "u2", name: "Priya Patel", email: "priya.patel@gmail.com", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Priya", role: "user", createdAt: "2025-09-20", lastLogin: "2026-03-05", totalOrders: 8 },
   { id: "u3", name: "Ankit Verma", email: "ankit.verma@gmail.com", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Ankit", role: "user", createdAt: "2025-11-01", lastLogin: "2026-03-04", totalOrders: 5 },
   { id: "u4", name: "Sneha Gupta", email: "sneha.gupta@gmail.com", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sneha", role: "user", createdAt: "2026-01-10", lastLogin: "2026-03-03", totalOrders: 3 },
-  { id: "a1", name: "Admin Chef", email: "admin@saffron.in", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Admin", role: "admin", createdAt: "2025-01-01", lastLogin: "2026-03-06", totalOrders: 0 },
+  { id: "a1", name: "Admin Chef", email: "admin@spicegarden.in", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Admin", role: "admin", createdAt: "2025-01-01", lastLogin: "2026-03-06", totalOrders: 0 },
 ];
 
 // Gallery images
