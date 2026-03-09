@@ -39,10 +39,10 @@ const ReservationPage = () => {
       date: form.date,
       time: form.time,
       notes: form.notes,
-      status: "confirmed",
+      status: "pending",
     });
     
-    toast.success(`Reservation confirmed! Booking ID: ${newReservation.id}`);
+    toast.success(`Reservation submitted! Waiting for admin approval. Booking ID: ${newReservation.id}`);
     setTimeout(() => {
       navigate("/profile/reservations");
     }, 1500);
