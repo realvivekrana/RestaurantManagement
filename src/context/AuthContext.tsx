@@ -66,14 +66,34 @@ const mockAdmin: MockUser = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<MockUser | null>(null);
+  const [user, setUser] = useState<MockUser | null>(() => {
+    // Initialize from localStorage
+    const stored = localStorage.getItem("auth_user");
+    return stored ? JSON.parse(stored) : null;
+  });
 
-  const login = useCallback(() => setUser(mockUser), []);
-  const loginAsAdmin = useCallback(() => setUser(mockAdmin), []);
-  const logout = useCallback(() => setUser(null), []);
+  const login = useCallback(() => {
+    setUser(mockUser);
+    localStorage.setItem("auth_user", JSON.stringify(mockUser));
+  }, []);
+  
+  const loginAsAdmin = useCallback(() => {
+    setUser(mockAdmin);
+    localStorage.setItem("auth_user", JSON.stringify(mockAdmin));
+  }, []);
+  
+  const logout = useCallback(() => {
+    setUser(null);
+    localStorage.removeItem("auth_user");
+  }, []);
 
   const updateUser = useCallback((updates: Partial<MockUser>) => {
-    setUser((prev) => (prev ? { ...prev, ...updates } : null));
+    setUser((prev) => {
+      if (!prev) return null;
+      const updated = { ...prev, ...updates };
+      localStorage.setItem("auth_user", JSON.stringify(updated));
+      return updated;
+    });
   }, []);
 
   const addAddress = useCallback((address: Omit<Address, "id">) => {
@@ -92,7 +112,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         addresses = addresses.map((a) => ({ ...a, isPrimary: false }));
       }
       
-      return { ...prev, addresses: [...addresses, newAddress] };
+      const updated = { ...prev, addresses: [...addresses, newAddress] };
+      localStorage.setItem("auth_user", JSON.stringify(updated));
+      return updated;
     });
   }, []);
 
@@ -111,7 +133,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         );
       }
       
-      return { ...prev, addresses };
+      const updated = { ...prev, addresses };
+      localStorage.setItem("auth_user", JSON.stringify(updated));
+      return updated;
     });
   }, []);
 
@@ -126,7 +150,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         addresses[0].isPrimary = true;
       }
       
-      return { ...prev, addresses };
+      const updated = { ...prev, addresses };
+      localStorage.setItem("auth_user", JSON.stringify(updated));
+      return updated;
     });
   }, []);
 
@@ -137,7 +163,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         ...a,
         isPrimary: a.id === id,
       }));
-      return { ...prev, addresses };
+      const updated = { ...prev, addresses };
+      localStorage.setItem("auth_user", JSON.stringify(updated));
+      return updated;
     });
   }, []);
 

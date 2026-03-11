@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import type { Reservation } from "@/context/OrderContext";
 
 const statusColor: Record<string, string> = {
+  pending: "bg-yellow-200 text-yellow-800",
   confirmed: "bg-primary/20 text-primary",
   cancelled: "bg-destructive/20 text-destructive",
   completed: "bg-green-200 text-green-800",
@@ -92,6 +93,7 @@ const AdminReservations = () => {
                       onChange={(e) => updateStatus(r.id, e.target.value as Reservation["status"])}
                       className="font-body text-xs border border-border rounded-lg px-2 py-1 bg-background focus:outline-none focus:ring-1 focus:ring-primary"
                     >
+                      <option value="pending">Pending</option>
                       <option value="confirmed">Confirmed</option>
                       <option value="completed">Completed</option>
                       <option value="cancelled">Cancelled</option>
