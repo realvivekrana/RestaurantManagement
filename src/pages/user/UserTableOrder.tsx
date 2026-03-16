@@ -66,7 +66,7 @@ const UserTableOrder = () => {
     if (sort === "price-low") result = [...result].sort((a, b) => a.price - b.price);
     else if (sort === "price-high") result = [...result].sort((a, b) => b.price - a.price);
     return result;
-  }, [search, activeCategory, diet, sort]);
+  }, [search, activeCategories, diet, sort]);
 
   const cartItems = useMemo(
     () =>
