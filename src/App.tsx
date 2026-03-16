@@ -37,6 +37,7 @@ import UserProfile from "./pages/user/UserProfile";
 import UserOrders from "./pages/user/UserOrders";
 import UserReservations from "./pages/user/UserReservations";
 import UserTableOrder from "./pages/user/UserTableOrder";
+import TrendingPage from "./pages/TrendingPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -87,6 +88,7 @@ const App = () => (
                 <Route path="analytics" element={<AdminAnalytics />} />
               </Route>
 
+              <Route path="/trending" element={<TrendingPage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
             <Footer />
