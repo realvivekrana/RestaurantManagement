@@ -30,7 +30,7 @@ const UserTableOrder = () => {
   const [notes, setNotes] = useState("");
   const [search, setSearch] = useState("");
   const [cart, setCart] = useState<Record<string, number>>({});
-  const [activeCategory, setActiveCategory] = useState("");
+  const [activeCategories, setActiveCategories] = useState<string[]>([]);
   const [diet, setDiet] = useState<DietFilter>("all");
   const [sort, setSort] = useState<SortOption>("default");
   const [openSection, setOpenSection] = useState<string | null>(null);
@@ -50,10 +50,15 @@ const UserTableOrder = () => {
 
   const toggleSection = (name: string) => setOpenSection((prev) => (prev === name ? null : name));
 
+  const toggleCategory = (cat: string) =>
+    setActiveCategories((prev) =>
+      prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat]
+    );
+
   const filteredMenu = useMemo(() => {
     let result = menuItems.filter((i) => {
       if (!i.isAvailable) return false;
-      const matchCat = activeCategory === "" || i.category === activeCategory;
+      const matchCat = activeCategories.length === 0 || activeCategories.includes(i.category);
       const matchSearch = !search || i.name.toLowerCase().includes(search.toLowerCase()) || i.category.toLowerCase().includes(search.toLowerCase());
       const matchDiet = diet === "all" || (diet === "veg" ? i.isVeg : !i.isVeg);
       return matchCat && matchSearch && matchDiet;
@@ -163,21 +168,24 @@ const UserTableOrder = () => {
               <div className="sticky top-24 bg-card border border-border rounded-xl shadow-sm overflow-hidden">
                 <div className="flex items-center justify-between px-3 py-2.5 border-b border-border">
                   <h3 className="font-body text-xs font-bold text-foreground">Filters</h3>
-                  {(activeCategory || diet !== "all" || sort !== "default") && (
-                    <button onClick={() => { setActiveCategory(""); setDiet("all"); setSort("default"); }} className="font-body text-[10px] font-semibold text-primary hover:underline">CLEAR</button>
+                  {(activeCategories.length > 0 || diet !== "all" || sort !== "default") && (
+                    <button onClick={() => { setActiveCategories([]); setDiet("all"); setSort("default"); }} className="font-body text-[10px] font-semibold text-primary hover:underline">CLEAR</button>
                   )}
                 </div>
                 <div className="px-3">
                   <FilterSection title="CATEGORIES" isOpen={openSection === "categories"} onToggle={() => toggleSection("categories")}>
                     <div className="flex flex-col">
-                      {filterCategories.map((cat) => (
-                        <label key={cat} className="flex items-center gap-2 px-1 py-1 cursor-pointer group" onClick={() => setActiveCategory(activeCategory === cat ? "" : cat)}>
-                          <span className={`w-3.5 h-3.5 rounded border-2 flex items-center justify-center transition-all ${activeCategory === cat ? "bg-primary border-primary" : "border-muted-foreground/40 group-hover:border-primary"}`}>
-                            {activeCategory === cat && <svg className="w-2 h-2 text-primary-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
-                          </span>
-                          <span className={`font-body text-xs ${activeCategory === cat ? "font-semibold text-foreground" : "text-muted-foreground group-hover:text-foreground"}`}>{cat}</span>
-                        </label>
-                      ))}
+                      {filterCategories.map((cat) => {
+                        const isChecked = activeCategories.includes(cat);
+                        return (
+                          <label key={cat} className="flex items-center gap-2 px-1 py-1 cursor-pointer group" onClick={() => toggleCategory(cat)}>
+                            <span className={`w-3.5 h-3.5 rounded border-2 flex items-center justify-center transition-all ${isChecked ? "bg-primary border-primary" : "border-muted-foreground/40 group-hover:border-primary"}`}>
+                              {isChecked && <svg className="w-2 h-2 text-primary-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
+                            </span>
+                            <span className={`font-body text-xs ${isChecked ? "font-semibold text-foreground" : "text-muted-foreground group-hover:text-foreground"}`}>{cat}</span>
+                          </label>
+                        );
+                      })}
                     </div>
                   </FilterSection>
                   <FilterSection title="DIET" isOpen={openSection === "diet"} onToggle={() => toggleSection("diet")}>
@@ -221,14 +229,14 @@ const UserTableOrder = () => {
             {/* Menu Grid */}
             <div className="flex-1 min-w-0">
               {/* Active filter chips */}
-              {(activeCategory || diet !== "all" || sort !== "default") && (
+              {(activeCategories.length > 0 || diet !== "all" || sort !== "default") && (
                 <div className="flex flex-wrap gap-1.5 mb-3">
                   <span className="font-body text-xs text-muted-foreground">{filteredMenu.length} results</span>
-                  {activeCategory && (
-                    <span className="inline-flex items-center gap-1 bg-primary/10 text-primary font-body text-[10px] font-semibold px-2 py-0.5 rounded-full">
-                      {activeCategory} <button onClick={() => setActiveCategory("")} className="hover:bg-primary/20 rounded-full"><Minus className="w-2.5 h-2.5" /></button>
+                  {activeCategories.map((cat) => (
+                    <span key={cat} className="inline-flex items-center gap-1 bg-primary/10 text-primary font-body text-[10px] font-semibold px-2 py-0.5 rounded-full">
+                      {cat} <button onClick={() => toggleCategory(cat)} className="hover:bg-primary/20 rounded-full"><Minus className="w-2.5 h-2.5" /></button>
                     </span>
-                  )}
+                  ))}
                   {diet !== "all" && (
                     <span className={`inline-flex items-center gap-1 font-body text-[10px] font-semibold px-2 py-0.5 rounded-full ${diet === "veg" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
                       {diet === "veg" ? "Veg" : "Non-Veg"} <button onClick={() => setDiet("all")} className="hover:opacity-70 rounded-full"><Minus className="w-2.5 h-2.5" /></button>
